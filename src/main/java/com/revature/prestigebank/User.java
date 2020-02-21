@@ -1,10 +1,13 @@
+package com.revature.prestigebank;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.revature.prestigebank;
 
+
+import com.revature.prestigebank.*;
 import java.util.TreeMap;
 import java.util.Map;
 
@@ -13,10 +16,9 @@ import java.util.Map;
  * @author panam
  */
 public class User {
-    private String username, password;
-    private Map<String,String> accounts = new TreeMap<>();
+    private String name, ssn, username, password;
+    public Map<String,String> accounts = new TreeMap<>();
     public Account checking, savings;
-    private double balance;
 
     public String getUsername() {
         return username;
@@ -42,13 +44,20 @@ public class User {
         this.accounts = accounts;
     }
 
-    public double getBalance() {
-        return balance;
+    public String getName() {
+        return name;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
+    public void setName(String name) {
+        this.name = name;
     }
-    
+
+    public String getSsn() {
+        return ssn;
+    }
+
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
+    }
     
 }
