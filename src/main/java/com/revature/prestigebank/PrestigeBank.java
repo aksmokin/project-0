@@ -28,7 +28,7 @@ public class PrestigeBank {
         Scanner s = new Scanner(System.in);
         
         
-        //log4j.trace("Logging activity...\n");
+        log4j.trace("Logging activity...\n");
         
         System.out.println("Welcome to Prestige Bank!\n");
         
