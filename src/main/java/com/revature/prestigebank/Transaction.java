@@ -1,13 +1,9 @@
-package com.revature.prestigebank;
-
-import com.revature.prestigebank.*;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+package com.revature.prestigebank;
 
 /**
  *
@@ -35,7 +31,7 @@ public class Transaction extends Thread {
 	       // }
 	            // Acquire the lock of Account 'to'
 	            synchronized (to) {
-	                to.setBalance(amount);
+	                to.deposit(amount);
 	            }
 	            // Release the lock of Account 'to'
 	        }
