@@ -1,7 +1,5 @@
 package com.revature.prestigebank;
 
-import com.revature.prestigebank.*;
-
 /**
  *
  * @author panam
@@ -41,5 +39,19 @@ public class Account {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+    
+    public static void displayOptions () {
+        System.out.println("What would you like to do?"
+        +"\n"+"1) Check Your Balance."
+        +"\n"+"2) Make A Withdrawal."
+        +"\n"+"3) Deposit Money."
+        +"\n"+"4) Exit Bank."
+        );
+    }
+    
+    public static void getAnswer() { 
+        System.out.print("\n"); 
+        System.out.println("Response> "); 
     }
 }
