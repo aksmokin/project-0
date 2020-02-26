@@ -9,6 +9,8 @@ import java.sql.DriverManager;
  *
  * @author panam
  */
+
+/* The Singleton Class */
 public class Database {
     private static final String dbLink = "jdbc:mysql://localhost:3306/bank?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC";
     private static final String dbDriver = "com.mysql.cj.jdbc.Driver";

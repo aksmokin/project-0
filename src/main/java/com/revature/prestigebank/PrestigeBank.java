@@ -5,6 +5,9 @@ import java.sql.*;
 import org.apache.logging.log4j.*;
 import static com.revature.prestigebank.Account.*;
 import static com.revature.prestigebank.Program.*;
+import java.io.File;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 /**
  *
  * @author panam
@@ -18,69 +21,61 @@ public class PrestigeBank {
     public static void main(String[] args) {
         String opChoice;
         String empChoice="";
-        boolean opValid = true;
+        Scanner s;
         
-        try {
-            DB.setAutoCommit(true);
-        } catch (SQLException e) { e.printStackTrace(); }
-        Scanner s = new Scanner(System.in);
+        log4j.log(Level.ALL, "Logging activity...");
+        log4j.info("Entering application...");
         
-        //log4j.trace("Logging activity...\n");
+        System.out.println("\nWelcome to Prestige Bank!");
         
-        System.out.println("Welcome to Prestige Bank!\n");
-                
-        System.out.println("Are you an employee or customer?"
-                +"\n"+"1) Customer"
-                +"\n"+"2) Employee"
+        do {
+        System.out.println("\nWhat would you like to do?"
+                +"\n"+"1) Sign in as a customer"
+                +"\n"+"2) Sign in as an employee"
+                +"\n"+"3) Exit Bank"
                 );
         getAnswer();
         
-        while (s.hasNextLine()) {
+        s = new Scanner(System.in);
+        if (s.hasNext()) {
             String userChoice = s.nextLine();
             switch (userChoice) {
                 case "1":
                     user = new User();
                     
-                    System.out.println("What would you like to do?"
+                    System.out.println("\nWhat would you like to do?"
                     +"\n"+"1) Access Your Account."
                     +"\n"+"2) Create An Account."
                     +"\n"+"3) Close An Account."
                     );
                     getAnswer();
                     
-                    while (s.hasNext()) {
+                    if (s.hasNext()) {
                     opChoice = s.next();
                     switch (opChoice) {
                         case "1": // Access Your Account
                             bank.showUserAccount(user);
-                            opValid = true;
                             break;
                         case "2": // Create An Account
                             bank.createUserAccount(user);
-                            opValid = true;
                             break;
                         case "3": // Close An Account
                             bank.closeUserAccount(user);
-                            opValid = true;
                             break;
                         default:
-                            opValid = false;
                             System.out.println(opChoice+" is an invalid choice. Try again.");
-                            displayOptions();
-                            getAnswer();
-                    }
-                    if (opValid) break;
+                        }
                    } 
                         break;
                         case "2": // User is an employee
-                        System.out.println("What would you like to do, next?"
+                        System.out.println("\nWhat would you like to do, next?"
                         +"\n"+"1) View Account Balance"
                         +"\n"+"2) Approve/Deny An Account"
                         +"\n"+"3) View Transaction History"
                         );
                         getAnswer();
                         
-                         while (s.hasNext()) {
+                         if (s.hasNext()) {
                             empChoice = s.next();
                             switch (empChoice) {
                                 case "1":
@@ -90,16 +85,20 @@ public class PrestigeBank {
                                     approveAccount();
                                     break;
                                 case "3":
-                                    System.out.println("Please, enter an existing account number.");
+                                    getTransactionHistory(user.checking);
                                     break;
                                 default:
                                     System.out.println(empChoice+" is an invalid choice. Try again, later. Goodbye!");
-                                    System.exit(0);
                             }
                         }
                         break;
+                        case "3":
+                          System.out.println("\nThank you for your business. Goodbye!");
+                          System.exit(0);
+                          break;
                     default:
                 }
             }
+    } while (true);
     }
 }

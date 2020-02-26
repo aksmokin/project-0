@@ -22,29 +22,23 @@ public class Employee implements UserDAO {
     public Employee() {
         users = new TreeMap<String, User>();
     }
-    
-    @Override
-    public Map<String, User> getAllUsers() {
-        return users;
-    }
 
     @Override
     public void showUserAccount(User user) {
         Scanner s = new Scanner(System.in);
-        boolean opValid=false;
+        boolean done=false;
+        int i=0;
         ResultSet rs;
         String opChoice="", tChoice="";
         
-        System.out.print("\n");
-        System.out.println("Please enter your username.");
+        System.out.println("\nPlease enter your username.");
         
         getAnswer();
         
         if (s.hasNext()) {
             user.setUsername(s.next());
 
-            System.out.print("\n");
-            System.out.println("Please enter your password.");
+            System.out.println("\nPlease enter your password.");
             getAnswer();
 
             if (s.hasNext()) {
@@ -52,17 +46,13 @@ public class Employee implements UserDAO {
 
                 try {
                     rs = authenticateUser(user);
-                    rs.first();
-                    System.out.println(rs.getString("customerID")); //Test
-                
+
                     if (rs.next())  {
                       user.setName(rs.getString("customerName"));
                       user.setSsn(rs.getString("customerID"));
 
-                  System.out.print("\n");
-                  System.out.println("Welcome, "+user.getName()+"!");
+                  System.out.println("\nWelcome, "+user.getName()+"!");
 
-                  // Problem Area
                   rs.beforeFirst();
                   while (rs.next()) {
                       if (rs.getString("type").equals("Checking")) {
@@ -86,75 +76,81 @@ public class Employee implements UserDAO {
                   rs.beforeFirst();
                   while (rs.next()) k++;
 
+                  do {
                   switch (k) {
                       case 1:
                           displayOptions();
                           getAnswer();
 
-                          while (s.hasNext()) {
-                     opChoice = s.next();
-                      switch (opChoice) {
-                          case "1": // Check Your Balance
-                              opValid = true;
-                              double d = (user.accounts.containsValue("Checking")) 
-                                      ? user.checking.getBalance() 
-                                      : user.savings.getBalance();
-                              System.out.println("Your current balance is $"+d+".");
-                              break;
-                          case "2": // Make A Withdrawal 
-                              double d1 = 0.0;
-                              System.out.println("Please, enter the dollar amount(w/o dollar signs) you wish to withdraw.");
-                                 if (s.hasNextDouble()) {
-                                     d1 = s.nextDouble();
-                                 }
-                              if (user.accounts.containsValue("Checking")) {
-                                  if (user.checking.getBalance()>= d1) {
-                                      user.checking.withdraw(d1);
-                                  } else {
-                                      System.out.println("Unable to complete transaction. Insufficient funds.");
-                                      System.exit(0);
-                                  }
-                              } else {
-                                  if (user.savings.getBalance()>= d1) {
-                                      user.savings.withdraw(d1);
-                                  } else {
-                                      System.out.println("Unable to complete transaction. Insufficient funds.");
-                                      System.exit(0);
-                                  }
-                              }
-                              System.out.println("Withdrawal successful! Thank you for your business!");
-                              opValid = true;
-                              break;
-                          case "3": // Deposit Money
-                              double dm = 0.0;
-                              System.out.println("Please, enter the dollar amount(w/o dollar signs) you wish to deposit.");
-                                 if (s.hasNextDouble()) {
-                                     dm = s.nextDouble();
-                                 }
-                              if (user.accounts.containsValue("Checking")) {
-                                  user.checking.setBalance(dm);
-                              } else {
-                                  user.savings.setBalance(dm);
-                              }
-                              System.out.println("Deposit successful! Thank you for your business!");
-                              opValid = true;
-                              break;
-                          case "4": // Exit Bank
-                              opValid = true;
-                              System.out.print("\n");
-                              System.out.println("Goodbye!");
-                              System.exit(0);
-                          default:
-                              opValid = false;
-                              System.out.println(opChoice+" is an invalid choice. Try again.");
-                              displayOptions();
-                      }
-                      if (opValid) break;
-                  } 
+                          q: while (s.hasNext()) {
+                              opChoice = s.next();
+                              switch (opChoice) {
+                                  case "1": // Check Your Balance
+                                      double d = (user.accounts.containsValue("Checking")) 
+                                          ? user.checking.getBalance() 
+                                          : user.savings.getBalance();
+                                      System.out.println("Your current balance is $"+d+".\n");
+                                      Thread.sleep(3000);
+                                      break q;
+                                  case "2": // Make A Withdrawal 
+                                      double d1 = 0.0;
+                                      System.out.println("\nPlease, enter the dollar amount(w/o dollar signs) you wish to withdraw.\n");
+                                      getAnswer();
+                                          if (s.hasNextDouble()) {
+                                              d1 = s.nextDouble();
+                                          }
+                                          if (user.accounts.containsValue("Checking")) {
+                                              if (user.checking.getBalance()>= d1) {
+                                                  i = user.checking.withdraw(d1);
+                                                  if (i > 0) {
+                                                    System.out.println("\nWithdrawal successful! Thank you for your business!\n");
+                                                  } else {
+                                                    System.out.println("\nThank you! Your withdrawal is pending.\n");
+                                              }
+                                              } else {
+                                                  System.out.println("Unable to complete transaction. Insufficient funds.\n");
+                                              }
+                                           } else {
+                                          if (user.savings.getBalance()>= d1) {
+                                              i = user.savings.withdraw(d1);
+                                              if (i > 0) {
+                                                  System.out.println("\nWithdrawal successful! Thank you for your business!\n");
+                                              } else {
+                                                  System.out.println("\nThank you! Your withdrawal is pending.\n");
+                                              }
+                                          } else {
+                                              System.out.println("Unable to complete transaction. Insufficient funds.\n");
+                                          }
+                                           }
+                                          Thread.sleep(3000);
+                                          break q;
+                                  case "3": // Deposit Money
+                                      double dm = 0.0;
+                                      System.out.println("\nPlease, enter the dollar amount(w/o dollar signs) you wish to deposit.\n");
+                                      getAnswer();
+                                         if (s.hasNextDouble()) {
+                                             dm = s.nextDouble();
+                                         }
+                                      if (user.accounts.containsValue("Checking")) {
+                                         i = user.checking.setBalance(dm);
+                                      } else {
+                                         i = user.savings.setBalance(dm);
+                                      }
+                                      if (i > 0) {
+                                        System.out.println("\nDeposit successful! Thank you for your business!\n");
+                                      } else {
+                                        System.out.println("\nThank you! Your deposit is pending.\n");
+                                      }
+                                      Thread.sleep(3000);
+                                      break q;
+                                  case "4": // Exit Menu
+                                      return;
+                                  default:
+                                      System.out.println(opChoice+" is an invalid choice. Try again.\n");
+                                }
+                            } 
                           break;
                       case 2:
-                          //ask which account needs to be accessed, then
-                          double d2=0.0;
                           System.out.println("Which account would you like to access?"
                             +"\n"+"1) Your Checking Account"
                             +"\n"+"2) Your Savings Account"
@@ -164,35 +160,132 @@ public class Employee implements UserDAO {
                               tChoice = s.next();
                               switch (tChoice) {
                                   case "1":
-                                      System.out.println("Please, enter the dollar amount(w/o dollar signs) you wish to withdraw.");
-                                      if (user.checking.getBalance()>= d2) {
-                                          user.checking.withdraw(d2);
-                                      } else {
-                                          System.out.println("Unable to complete transaction. Insufficient funds.");
-                                          System.exit(0);
-                                      }
+                                      displayOptions();
+                                      getAnswer();
+                                      
+                               r: while (s.hasNext()) {
+                                  opChoice = s.next();
+                                  switch (opChoice) {
+                                      case "1": // Check Your Balance
+                                          if (user.accounts.containsValue("Checking")) {
+                                               double d = user.checking.getBalance();
+                                               System.out.println("Your current balance is $"+d+".\n");
+                                          }
+                                          Thread.sleep(3000);
+                                          break r;
+                                      case "2": // Make A Withdrawal 
+                                          double d1 = 0.0;
+                                          System.out.println("\nPlease, enter the dollar amount(w/o dollar signs) you wish to withdraw.\n");
+                                          getAnswer();
+                                              if (s.hasNextDouble()) {
+                                                  d1 = s.nextDouble();
+                                              }
+                                              if (user.accounts.containsValue("Checking")) {
+                                                  if (user.checking.getBalance()>= d1) {
+                                                     i = user.checking.withdraw(d1);
+                                                     if (i > 0) {
+                                                        System.out.println("\nWithdrawal successful! Thank you for your business!\n");
+                                                     } else {
+                                                        System.out.println("\nThank you! Your withdrawal is pending.\n");
+                                                     }
+                                                  } else {
+                                                      System.out.println("Unable to complete transaction. Insufficient funds.\n");
+                                                  }
+                                               }
+                                              Thread.sleep(3000);
+                                              break r;
+                                      case "3": // Deposit Money
+                                          double dm = 0.0;
+                                          System.out.println("\nPlease, enter the dollar amount(w/o dollar signs) you wish to deposit.\n");
+                                          getAnswer();
+                                             if (s.hasNextDouble()) {
+                                                 dm = s.nextDouble();
+                                             }
+                                          if (user.accounts.containsValue("Checking")) {
+                                              i = user.checking.setBalance(dm);
+                                              if (i > 0) {
+                                                 System.out.println("\nDeposit successful! Thank you for your business!\n");
+                                              } else {
+                                                 System.out.println("\nThank you! Your deposit is pending.\n");
+                                              };
+                                          }
+                                          Thread.sleep(3000);
+                                          break r;
+                                      case "4": // Exit Menu
+                                          return;
+                                      default:
+                                          System.out.println(opChoice+" is an invalid choice. Try again.\n");
+                                  }
+                                } 
                                       break;
                                   case "2":
-                                      System.out.println("Please, enter the dollar amount(w/o dollar signs) you wish to withdraw.");
-                                      if (user.savings.getBalance()>= d2) {
-                                      user.savings.withdraw(d2);
-                                  } else {
-                                      System.out.println("Unable to complete transaction. Insufficient funds.");
-                                      System.exit(0);
-                                  }
+                                      displayOptions();
+                                      getAnswer();
+                                   t: while (s.hasNext()) {
+                                      opChoice = s.next();
+                                      switch (opChoice) {
+                                          case "1": // Check Your Balance
+                                              if (user.accounts.containsValue("Savings")) {
+                                                   double d = user.savings.getBalance();
+                                                   System.out.println("Your current balance is $"+d+".\n");
+                                              }
+                                              Thread.sleep(3000);
+                                              break t;
+                                          case "2": // Make A Withdrawal 
+                                              double d1 = 0.0;
+                                              System.out.println("\nPlease, enter the dollar amount(w/o dollar signs) you wish to withdraw.\n");
+                                              getAnswer();
+                                                  if (s.hasNextDouble()) {
+                                                      d1 = s.nextDouble();
+                                                  }
+                                                  if (user.accounts.containsValue("Savings")) {
+                                                      if (user.savings.getBalance()>= d1) {
+                                                         i = user.savings.withdraw(d1);
+                                                          if (i > 0) {
+                                                              System.out.println("\nWithdrawal successful! Thank you for your business!\n");
+                                                          } else {
+                                                              System.out.println("\nThank you! Your withdrawal is pending.\n");
+                                                          }
+                                                      } else {
+                                                          System.out.println("\nUnable to complete transaction. Insufficient funds.\n");
+                                                      }
+                                                   }
+                                                  Thread.sleep(3000);
+                                                  break t;
+                                          case "3": // Deposit Money
+                                              double dm = 0.0;
+                                              System.out.println("\nPlease, enter the dollar amount(w/o dollar signs) you wish to deposit.\n");
+                                              getAnswer();
+                                                 if (s.hasNextDouble()) {
+                                                     dm = s.nextDouble();
+                                                 }
+                                              if (user.accounts.containsValue("Savings")) {
+                                                  i = user.savings.setBalance(dm);
+                                                  if (i > 0) {
+                                                     System.out.println("\nDeposit successful! Thank you for your business!\n");
+                                                  } else {
+                                                     System.out.println("\nThank you! Your deposit is pending.\n");
+                                                  }
+                                              }
+                                              Thread.sleep(3000); 
+                                              break t;
+                                          case "4": // Exit Menu
+                                              return;
+                                          default:
+                                              System.out.println(opChoice+" is an invalid choice. Try again.\n");
+                                      }
+                                    } 
                                       break;
                                   default:
-                                      System.out.println(tChoice+" is an invalid choice. Try again, later. Goodbye!");
-                                      System.exit(0);
+                                      System.out.println(tChoice+" is an invalid choice. Try again, later. Goodbye!\n");
                               }
                           }
                           break;
                       default:
                   }
-                  //ask which account needs to be accessed, then 
+                 } while (!done);
                 } else {
                     System.out.println("Sorry, your username and/or password is incorrect.\n");
-                    System.exit(0);
                 }
               }
               catch (Exception e) { System.err.println(e.getMessage()); }
@@ -266,8 +359,7 @@ public class Employee implements UserDAO {
             if (s.hasNext()) {
                 name = s.next();
 
-            System.out.print("\n");
-            System.out.println("Submit your initial deposit amount. (w/o dollar signs)");
+            System.out.println("\nSubmit your initial deposit amount. (w/o dollar signs)");
             getAnswer();
 
             if (s.hasNext()) {
@@ -279,7 +371,7 @@ public class Employee implements UserDAO {
 
                 if (s.hasNext()) {
                     user.setUsername(s.next());
-                    System.out.println("Please, create a password for your account.\n");
+                    System.out.println("\nPlease, create a password for your account.\n");
                     getAnswer();
 
                     if (s.hasNext()) {
@@ -328,12 +420,13 @@ public class Employee implements UserDAO {
                         int accountStatus = stmt.executeUpdate();
 
                         if (accountStatus > 0) {
-                            System.out.println("Successful Submission! Thank you for your submission.");
+                            System.out.println("\nSuccessful Submission! Thank you for your submission.");
                             System.out.println("\nYour new account number will be sent to you once you're approved!");
                         }
                     } else {
-                        System.out.println("Thank you, "+name+"!"+" Your account is pending.");
+                        System.out.println("\nThank you, "+name+"!"+" Your account is pending.");
                     }
+                        Thread.sleep(5000);
                 } catch (Exception e) { e.printStackTrace(); }
                         }
                     }
@@ -348,16 +441,14 @@ public class Employee implements UserDAO {
     public void closeUserAccount(User user) {
         Scanner s = new Scanner(System.in);
         
-        System.out.print("\n");
-        System.out.println("Please enter your username.");
+        System.out.println("\nPlease enter your username.");
         
         getAnswer();
 
         if (s.hasNext()) {
             user.setUsername(s.next());
 
-            System.out.print("\n");
-            System.out.println("Please enter your password.");
+            System.out.println("\nPlease enter your password.");
             getAnswer();
 
             if (s.hasNext()) {
@@ -379,7 +470,7 @@ public class Employee implements UserDAO {
             } catch (SQLException e) { e.printStackTrace(); }
             }
         }
-        System.out.println("Your account has been closed. Thank you for your business!");
+        System.out.println("\nYour account has been closed. Thank you for your business!");
     }
 
     @Override
@@ -393,12 +484,11 @@ public class Employee implements UserDAO {
         + "AND password=?)";
 
         pstmt = DB.prepareStatement(query);
-        pstmt.setString(1, user.getName());
+        pstmt.setString(1, user.getUsername());
         pstmt.setString(2, user.getPassword());
         
         rs = pstmt.executeQuery();
-        pstmt.close();
-        
+
         return rs;
     }
     
